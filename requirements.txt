@@ -1,6 +1,3 @@
 streamlit
 openai
 fpdf
-playsound
-edge-tts
-SpeechRecognition
