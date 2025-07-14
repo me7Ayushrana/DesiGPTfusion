@@ -5,7 +5,7 @@ import datetime
 from fpdf import FPDF
 import re
 
-openai.api_key = "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"
+openai.api_key = "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"
 openai.api_base = "https://openrouter.ai/api/v1"
 MODEL = "meta-llama/llama-3-8b-instruct"
 
