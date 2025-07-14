@@ -3,9 +3,8 @@ import openai
 import os
 import datetime
 from fpdf import FPDF
-import re
 
-openai.api_key = "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"
+openai.api_key = "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"
 openai.api_base = "https://openrouter.ai/api/v1"
 MODEL = "meta-llama/llama-3-8b-instruct"
 
@@ -24,7 +23,7 @@ def get_pdf_filename():
 def save_chat(user_msg, bot_msg):
     with open(os.path.join("chats", get_date_filename()), "a", encoding="utf-8") as f:
         f.write(f"{get_timestamp()} You: {user_msg}\n")
-        f.write(f"{get_timestamp()} DesiGPTfusion: {bot_msg}\n\n")
+        f.write(f"{get_timestamp()} DesiGPT: {bot_msg}\n\n")
 
 def clear_chat():
     st.session_state.chat_history = []
@@ -39,48 +38,47 @@ def export_to_pdf():
     pdf.output(pdf_path)
     return pdf_path
 
-st.set_page_config(page_title="DesiGPTfusion", layout="centered")
-st.title("💖 DesiGPTfusion")
+st.set_page_config(page_title="DesiGPT", layout="centered")
+st.title("DesiGPT")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-
 if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "system",
         "content": (
-            "You are DesiGPTfusion – a smart and helpful conversational assistant. "
-            "You respond in a friendly, casual Hinglish tone. Keep your responses natural, short, and real."
+            "You are DesiGPT – a smart, humble Indian chatbot who speaks in Hinglish (Hindi + English mix) in a simple and clear tone. "
+            "You should sound desi and friendly, but NEVER overact, never use confusing poetry or over-dramatic words. "
+            "Use relevant emojis only where they make sense. Speak with respect and logic, like a helpful college buddy. "
+            "Do not generate stories or filmy language unless specifically asked. Keep answers to-the-point, helpful, and funny when appropriate."
         )
     }]
 
-user_input = st.text_input("💬 Type your message:")
+user_input = st.text_input("💬 Enter your message:")
 
 if user_input:
     st.session_state.chat_history.append(("You", user_input))
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    with st.spinner("Thinking..."):
+    with st.spinner("Soch raha hoon bhai... 🤔"):
         try:
             response = openai.ChatCompletion.create(
                 model=MODEL,
                 messages=st.session_state.messages
             )
             reply = response["choices"][0]["message"]["content"]
-            if len(reply.split()) > 35:
-                reply = ' '.join(reply.split()[:35]) + "..."
         except Exception as e:
             reply = "⚠️ Error: " + str(e)
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
-    st.session_state.chat_history.append(("DesiGPTfusion", reply))
+    st.session_state.chat_history.append(("DesiGPT", reply))
     save_chat(user_input, reply)
 
 for speaker, msg in st.session_state.chat_history:
     if speaker == "You":
         st.write(f"👤 **{speaker}**: {msg}")
     else:
-        st.success(f"💖 **{speaker}**: {msg}")
+        st.success(f"🤖 **{speaker}**: {msg}")
 
 col1, col2, col3 = st.columns(3)
 
@@ -88,7 +86,7 @@ with col1:
     if st.button("🧹 Clear Chat"):
         clear_chat()
 with col2:
-    if st.button("📄 Export PDF"):
+    if st.button("📄 Export as PDF"):
         pdf_path = export_to_pdf()
         with open(pdf_path, "rb") as f:
             st.download_button("📥 Download PDF", f, file_name=os.path.basename(pdf_path), mime="application/pdf")
