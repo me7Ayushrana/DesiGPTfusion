@@ -4,8 +4,11 @@ import os
 import datetime
 from fpdf import FPDF
 
-openai.api_key = "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"
-openai.api_base = "https://openrouter.ai/api/v1"
+client = openai.OpenAI(
+    api_key="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",
+    base_url="https://openrouter.ai/api/v1"
+)
+
 MODEL = "meta-llama/llama-3-8b-instruct"
 
 os.makedirs("chats", exist_ok=True)
@@ -47,10 +50,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = [{
         "role": "system",
         "content": (
-            "You are DesiGPT – a smart, humble Indian chatbot who speaks in Hinglish (Hindi + English mix) in a simple and clear tone. "
-            "You should sound desi and friendly, but NEVER overact, never use confusing poetry or over-dramatic words. "
-            "Use relevant emojis only where they make sense. Speak with respect and logic, like a helpful college buddy. "
-            "Do not generate stories or filmy language unless specifically asked. Keep answers to-the-point, helpful, and funny when appropriate."
+            "You are DesiGPT – a smart, humble Indian chatbot who speaks in Hinglish (Hindi + English mix). "
+            "Be helpful and short. Avoid filmy or over-poetic responses. Keep it to-the-point and respectful."
         )
     }]
 
@@ -60,13 +61,13 @@ if user_input:
     st.session_state.chat_history.append(("You", user_input))
     st.session_state.messages.append({"role": "user", "content": user_input})
 
-    with st.spinner("Soch raha hoon bhai... 🤔"):
+    with st.spinner("Thinking... 🤔"):
         try:
-            response = openai.ChatCompletion.create(
+            response = client.chat.completions.create(
                 model=MODEL,
                 messages=st.session_state.messages
             )
-            reply = response["choices"][0]["message"]["content"]
+            reply = response.choices[0].message.content
         except Exception as e:
             reply = "⚠️ Error: " + str(e)
 
