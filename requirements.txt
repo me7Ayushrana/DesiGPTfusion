@@ -4,4 +4,3 @@ fpdf
 playsound
 edge-tts
 SpeechRecognition
-pyaudio
