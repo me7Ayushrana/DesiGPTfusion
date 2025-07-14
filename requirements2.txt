@@ -1,8 +1,7 @@
 streamlit
 openai
-speechrecognition
-pyttsx3
 fpdf
-PyMuPDF
-deep_translator
-streamlit-authenticator
+playsound
+edge-tts
+SpeechRecognition
+pyaudio
